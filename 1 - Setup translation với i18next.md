@@ -1,7 +1,7 @@
 # Cài đặt translation với i18next
 
-i18next là một framework hỗ trợ cho phép thực hiện chức năng dịch đa ngôn ngữ. Trong thực tế khi một dự án
-ra đời sẽ thường có tính năng dịch đa ngôn ngữ hỗ trợ tiếp cận nội dung tốt hơn cho người dùng.
+i18next là một framework hỗ trợ cho phép thực hiện chức năng dịch đa ngôn ngữ.
+Trong thực tế khi một dự án ra đời sẽ thường có tính năng dịch đa ngôn ngữ hỗ trợ tiếp cận nội dung tốt hơn cho người dùng.
 
 ## Cài đặt i18next
 
@@ -14,7 +14,7 @@ ra đời sẽ thường có tính năng dịch đa ngôn ngữ hỗ trợ tiế
 ### 1. Khai báo constant cần thiết:
 
 - Tạo một enum `Elanguage` trong `constant/i18n.ts` để định nghĩa ngôn ngữ có trong dự án.
-- Thêm một key `language` trong `constant/storage.ts` để lưu active ngôn ngữ.
+- Thêm một key `language` trong `constant/storage.ts` để lưu active ngôn ngữ trong storage.
 
 ```jsx
 /// constant/i18n.ts
@@ -34,8 +34,8 @@ export const STORAGE = {
 ### 2. Khởi tạo file cấu hình i18next:
 
 - Tại folder `languages` tạo 1 file `index.ts`.
-- Khai báo `languageDetector` cấu hình các phương thức cũng như giá trị ban đầu.
-- Gọi i18next dùng hàm `use` để thêm cấu hình và `init` để khởi tạo i18next.
+- Khai báo `languageDetector` cấu hình hỗ trợ phát hiện ngôn ngữ.
+- Gọi i18next dùng hàm `use` để thêm cấu hình và `init` để khởi tạo trình dịch.
 
 ```jsx
 /// languages/i18n.ts
@@ -68,7 +68,7 @@ i18next.use(languageDetector).use(initReactI18next).init({
 });
 ```
 
-- Khai báo hàm `initLanguage` để chạy khởi ngôn ngữ khi chạy dự án.
+- Khai báo hàm `initLanguage` để khởi tạo ngôn ngữ ban đầu khi chạy dự án.
 - Khai báo hàm `setLanguge` để set lại ngôn ngữ mới khi người dùng đổi ngôn ngữ và lưu ngôn ngữ mới vào `localStorage`.
 
 ```jsx
@@ -91,7 +91,7 @@ const setLanguage = (value: ELanguages) => {
 
 ```
 
-- Khai báo biến `languageOptions` để sử dụng ở nơi khác.
+- Khai báo biến `languageOptions` để sử dụng ở nơi khác cần dùng đến.
 - Xuất biến `I18nApp` để import vào `App.tsx` khởi tạo i18next.
 
 ```jsx

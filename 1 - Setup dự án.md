@@ -1,5 +1,7 @@
 # Cấu trúc dự án CMS Admin - React & Typescript
 
+Dự án CMS Admin - React & Typescript được xây dựng dựa trên các công nghệ React, TypeScript, Material UI, Apexcharts và nhiều thư viện liên quan khác.
+
 ## I. Khởi tạo dự án
 
 - Cài đặt NodeJS.
@@ -71,6 +73,7 @@
 ## III. Điều chỉnh file package.json dự án
 
 - Thêm những package cơ bản ban đầu sẽ cần dùng tới trong dự án vào file `src/package.json`.
+- Những package như `axios`, `classnames`, `lodash`,...
 
 ```jsx
 {
