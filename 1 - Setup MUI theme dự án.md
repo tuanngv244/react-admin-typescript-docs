@@ -1,6 +1,6 @@
 # Cài đặt MUI theme dự án
 
-Material UI là một thư viện mã nguồn mở hỗ trợ cung cấp cho các developer những bộ UI components và configs dựng sẵn theo nguyên tắc Material Design của Google. Nó giúp các developer làm việc với UI nhanh hơn, tiện lợi hơn.
+Material UI là một thư viện mã nguồn mở hỗ trợ cung cấp cho các developer những bộ UI components và configs dựng sẵn theo nguyên tắc Material Design của Google. Nó cung cấp một bộ công cụ phong phú để xây dựng giao diện người dùng hiện đại, đáp ứng và nhất quán.
 
 ## Cài đặt MUI
 
@@ -47,10 +47,10 @@ export default App;
 - Trong folder `theme`:
 
   - Tải tài nguyên theme từ [Theme](https://vitejs.dev/) và bỏ những file cấu hình theme có sẵn vào folder.
-  - Tạo hook `useTheme` trong folder theme để tách biệt logic cấu hình theme và nhiều logic về theme khác.
+  - Tạo file `index.ts` và khởi tạo hook `useTheme` trong đó để tách biệt logic cấu hình theme và nhiều logic về theme khác.
 
 - Trong file `App.tsx`:
-  - Import `theme` return từ `useTheme` vào lại như ban đầu.
+  - Import `theme` từ `useTheme` vào lại như ban đầu.
 
 ```jsx
 // theme/index.ts
@@ -95,7 +95,6 @@ export default App;
 ## Cấu hình theme nâng cao
 
 - Trong file `theme/index.tsx`:
-  - Khởi tạo hook `useTheme`.
   - Tạo biến tạm mặc định `activeTheme` và `activeMode`.
   - Tạo `lightThemeOptions` dựa trên `LightThemeColors` và `darkThemeOptions` dựa trên `DarkThemeColors` đã được cấu hình sẵn trong folder theme.
   - Tạo `defaultTheme`, Dựa vào `activeTheme` kiểm tra điều kiện để xác định `defaultTheme`.
@@ -240,7 +239,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 - Trong folder `store`:
   - Tạo folder `customizer`.
   - Tạo file `customer/CustomizerSlice.ts`.
-  - Định nghĩa type `StateType` để định nghĩa type cho state của `customizer` slice.
+  - Định nghĩa type `StateType` cho state của `customizer` slice.
   - Thêm `initialState` là state các giá trị ban đầu cấu hình cơ bản của theme có sẵn.
 
 ```jsx
