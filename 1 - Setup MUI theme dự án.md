@@ -8,12 +8,13 @@ Material UI là một thư viện mã nguồn mở hỗ trợ cung cấp cho cá
 
 ## Cấu hình theme cơ bản
 
-- Bọc `ThemeProvider` ngoài cùng trong file `App.tsx` để cung cấp context tài nguyên của theme trên toàn dự án.
-- Thêm biến `theme` bằng function `createTheme` dùng để tạo theme cấu hình ban đầu. Material UI cung cấp function `createTheme` để cấu hình cho dự án như màu sắc, kiểu chữ, kích thước,...
-- Thêm `CssBaseline` hỗ trợ cấu hình các style mặc định như loại bỏ margin, box-sizing, màu nền, màu scrollbar,...
+- Trong file `App.tsx`:
+  - Dùng `ThemeProvider` bao ngoài cùng để áp dụng theme cho toàn bộ ứng dụng.
+  - Tạo `theme` với `createTheme` để tùy chỉnh theme.
+  - Dùng `CssBaseline` hỗ trợ cấu hình các style mặc định
 
 ```jsx
-import { ThemeProvider, createTheme } from '@mui/material';
+import {  CssBaseline,ThemeProvider, createTheme } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -43,28 +44,30 @@ function App(){
 export default App;
 ```
 
-- Tải tài nguyên theme và bỏ những file cấu hình theme có sẵn vào folder theme trong dự án.
-- Nâng cao hơn chúng ta tạo hook `useTheme` trong folder theme để tiện cấu hình theme và nhiều logic về theme khác.
-- Import biến `theme` từ `useTheme` vào lại `App.tsx` như ban đầu.
+- Trong folder `theme`:
+
+  - Tải tài nguyên theme từ [Theme](https://vitejs.dev/) và bỏ những file cấu hình theme có sẵn vào folder.
+  - Tạo hook `useTheme` trong folder theme để tách biệt logic cấu hình theme và nhiều logic về theme khác.
+
+- Trong file `App.tsx`:
+  - Import `theme` return từ `useTheme` vào lại như ban đầu.
 
 ```jsx
 // theme/index.ts
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 export const useTheme = () => {
-    const theme = createTheme(
-     {
-        palette: {
-        primary: {
-          main: '#1976d2',
-        },
-        secondary: {
-          main: '#dc004e',
-        },
-      }
-    );
-
-    return theme;
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#1976d2",
+      },
+      secondary: {
+        main: "#dc004e",
+      },
+    },
+  });
+  return theme;
 };
 ```
 
@@ -91,12 +94,12 @@ export default App;
 
 ## Cấu hình theme nâng cao
 
-- Thêm biến dữ liệu tạm mặc định `activeTheme` và `activeMode`.
-- Thêm cấu hình chế độ `light mode/dark mode` trong theme.
-- Khai báo `lightThemeOptions` dựa trên `LightThemeColors` và `darkThemeOptions` dựa trên `DarkThemeColors` đã được cấu hình sẵn trong folder theme.
-- Khai báo 2 biến tạm ban đầu `activeTheme` và `activeMode` nhằm mục đích để bật/tắt chế độ theme và light/dark mode trong tương lai.
-- Dựa vào `activeTheme` và `activeMode` kiểm tra điều kiện để biết chính xác được `defaultTheme`.
-- Thêm `defaultTheme` vào cấu hình `createTheme` ở biến theme.
+- Trong file `theme/index.tsx`:
+  - Khởi tạo hook `useTheme`.
+  - Tạo biến tạm mặc định `activeTheme` và `activeMode`.
+  - Tạo `lightThemeOptions` dựa trên `LightThemeColors` và `darkThemeOptions` dựa trên `DarkThemeColors` đã được cấu hình sẵn trong folder theme.
+  - Tạo `defaultTheme`, Dựa vào `activeTheme` kiểm tra điều kiện để xác định `defaultTheme`.
+  - Thêm `defaultTheme` vào cấu hình `createTheme` trong `theme`.
 
 ```jsx
 import { ThemeMode } from "@/constants/theme";
@@ -126,17 +129,15 @@ export const useTheme = () => {
 };
 ```
 
-- Dựa vào `activeTheme` và `activeMode` chúng ta tiếp tục cấu hình hoàn thiện theme với `defaultShadow`, `themeSelect` và `baseMode`.
-- Thêm biến `baseMode` để thêm thông tin cấu hình style trong dự án.
-- Thêm`Typography` cấu hình font size, font weight,...
-- Thêm biến `defaultShadow` để cấu hình style shadow.
-- Thêm biến`themeSelect` dùng để set lại theme options khi theme được thay đổi bởi user.
-- Thêm `components` dùng để cấu hình style cho components từ folder theme dựng sẵn.
+- Tạo `defaultShadow`, `themeSelect` và `baseMode`. Dựa vào `activeMode` để tùy chỉnh cấu hình theme.
+- Dùng `Typography` cấu hình font size, font weight,...
+- Dùng `components` để cấu hình style cho components từ folder theme dựng sẵn.
 
 ```jsx
 import { darkshadows, shadows } from "./Shadows";
 import Typography from "./Typography";
 import * as locales from "@mui/material/locale";
+import components from "./Components";
 
 export const useTheme = () => {
   const activeTheme = "BLUE_THEME";
@@ -182,10 +183,11 @@ export const useTheme = () => {
 ### 1. Cấu hình redux
 
 - Sử dụng lệnh `yarn add react-redux @reduxjs/toolkit` để cài đặt redux vào dự án.
-- Thêm file `store/index.ts` để cấu hình store cho dự án.
-- Sử dụng `configureStore` để khởi tạo store.
-- Export các type `AppState` và `AppDispatch` để dùng cho các trường hợp định nghĩa type cho `selector` và `dispatch` trong dự án.
-- Export 2 custom hook `useAppDispatch` và `useAppSelector` để dùng chung đã bao gồm setup có type, thay vì dùng `useDispatch` và `useSelector` mặc định.
+- Trong folder `store`:
+  - Tạo file `index.ts` để cấu hình store cho dự án.
+  - Dùng `configureStore` để khởi tạo store.
+  - Export các type `AppState` và `AppDispatch` để dùng cho các trường hợp định nghĩa type cho `selector` và `dispatch` trong dự án.
+  - Export 2 custom hook `useAppDispatch` và `useAppSelector` để dùng chung đã bao gồm setup có type, thay vì dùng `useDispatch` và `useSelector` mặc định.
 
 ```jsx
 import { configureStore } from '@reduxjs/toolkit';
@@ -212,9 +214,9 @@ export const useAppSelector = useSelector.withTypes<AppState>()
 export default store;
 ```
 
-- Import `store` vừa tạo vào file `main.tsx`.
-- Bọc `App` lại bằng `Provider` của `react-redux` để sử dụng các tính năng của Redux.
-- Gán `store` vừa tạo vào store của `Provider` để làm store của dự án.
+- Trong file `main.tsx`:
+  - Dùng `Provider` bao ngoài `App` để sử dụng các tính năng của Redux.
+  - Import `store` vào `main.tsx` và gán `store` vừa tạo vào store của `Provider` để làm store của dự án.
 
 ```jsx
 import { Provider } from 'react-redux';
@@ -224,18 +226,43 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <Provider store={store}>
           <App />
-      </React.StrictMode>,
-    </Provider>,
+       </Provider>,
+    </React.StrictMode>,
 );
 ```
 
 ### 2. Thay đổi theme với redux
 
-- Khởi tạo module `customizer` trong folder store. Tạo folder `customizer` và file `customer/CustomizerSlice.ts`.
-- Thêm type `StateType` để định nghĩa type cho state của `CustomizerSlice`.
-- Thêm `initialState` là state các giá trị ban đầu cấu hình cơ bản của theme có sẵn.
+- Trong folder `constants`:
+
+  - Tạo file `theme.ts` và thêm enum `ThemeMode` và `ThemeColor` để định nghĩa theme và mode.
+
+- Trong folder `store`:
+  - Tạo folder `customizer`.
+  - Tạo file `customer/CustomizerSlice.ts`.
+  - Định nghĩa type `StateType` để định nghĩa type cho state của `customizer` slice.
+  - Thêm `initialState` là state các giá trị ban đầu cấu hình cơ bản của theme có sẵn.
 
 ```jsx
+export enum ThemeMode {
+    LIGHT = 'light',
+    DARK = 'dark',
+}
+export enum ThemeColor {
+    BLUE_THEME = 'blue',
+    GREEN_THEME = 'green',
+    BLACK_THEME = 'black',
+    PURPLE_THEME = 'purple',
+    ORANGE_THEME = 'orange',
+    CYAN_THEME = 'cyan',
+    AQUA_THEME = 'aqua',
+}
+```
+
+```jsx
+import { createSlice } from "@reduxjs/toolkit";
+import { ThemeColor, ThemeMode } from "../../constants";
+
 interface StateType {
   activeMode?: string;
   activeTheme?: string;
@@ -249,7 +276,7 @@ interface StateType {
   isHorizontal?: boolean;
   isLanguage?: string;
   isCardShadow?: boolean;
-  borderRadius?: number | any;
+  borderRadius?: number;
 }
 
 const initialState: StateType = {
@@ -339,7 +366,8 @@ export const {
 export default CustomizerSlice.reducer;
 ```
 
-- Import `CustomizerReducer` vào `reducer` trong store.
+- Trong file `store/index.ts`:
+  - Import `CustomizerReducer` vào `reducer`
 
 ```jsx
 import CustomizerReducer from './customizer/CustomizerSlice';
@@ -355,26 +383,9 @@ export const store = configureStore({
 export default store;
 ```
 
-- Tiếp theo thêm `constants/theme.ts` và thêm enum `ThemeMode` và `ThemeColor` để định nghĩa theme và mode.
-
-```jsx
-export enum ThemeMode {
-    LIGHT = 'light',
-    DARK = 'dark',
-}
-export enum ThemeColor {
-    BLUE_THEME = 'blue',
-    GREEN_THEME = 'green',
-    BLACK_THEME = 'black',
-    PURPLE_THEME = 'purple',
-    ORANGE_THEME = 'orange',
-    CYAN_THEME = 'cyan',
-    AQUA_THEME = 'aqua',
-}
-```
-
-- Tiếp tục trở lại `useTheme` sau khi đã có cấu hình theme với redux chúng ta loại bỏ những biến mặc định `activeTheme`, `activeMode`, `borderRadius`.
-- Lấy ra `customizer` từ store các cấu hình theme mà chúng ta đã khai báo ở `CustomizerSlice` để xác định cấu hình theme theo tương tác của người dùng.
+- Trong hook `useTheme`:
+- Loại bỏ những biến mặc định `activeTheme`, `activeMode`, `borderRadius`.
+- Lấy ra `customizer` từ store các cấu hình theme `activeTheme`,`activeMode` và `borderRadius` đã khai báo ở `CustomizerSlice`.
 
 ```jsx
 import { useSelector } from "react-redux";

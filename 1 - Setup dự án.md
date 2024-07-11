@@ -79,7 +79,8 @@ Dự án CMS Admin - React & Typescript được xây dựng dựa trên các c�
 {
     ...
     "dependencies": {
-        "@svgr/rollup": "^8.1.0",
+     "@svgr/rollup": "^8.1.0",
+    "@types/lodash": "^4.17.6",
         "axios": "^1.6.8",
         "classnames": "^2.5.1",
         "js-cookie": "^3.0.5",
@@ -105,3 +106,57 @@ Dự án CMS Admin - React & Typescript được xây dựng dựa trên các c�
 
 <br />
 <br />
+
+## Thêm cấu hình điều chỉnh import alias:
+
+- Trong file `tsconfig.json` thêm các cấu hình:
+
+```jsx
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["src"]
+}
+
+```
+
+- Trong file `vite.config.ts`:
+
+```jsx
+import { defineConfig } from "vite";
+import svgr from "@svgr/rollup";
+import react from "@vitejs/plugin-react";
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react(), svgr()],
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
+  },
+});
+```
