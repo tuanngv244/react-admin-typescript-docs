@@ -41,7 +41,7 @@ Dự án CMS Admin - React & Typescript được xây dựng dựa trên các c�
 
 - Chứa các component dạng layout
 
-### 7. src/constant
+### 7. src/constants
 
 - Những biến dạng const sử dụng trong toàn hệ thống (PATH, API, message,....)
 

@@ -387,10 +387,10 @@ export default store;
 - Lấy ra `customizer` từ store các cấu hình theme `activeTheme`,`activeMode` và `borderRadius` đã khai báo ở `CustomizerSlice`.
 
 ```jsx
-import { useSelector } from "react-redux";
+import { useAppSelector } from "@/store";
 
 export const useTheme = () => {
-  const customizer = useSelector((state) => state.customizer);
+  const customizer = useAppSelector((state) => state.customizer);
   const { activeTheme, activeMode, borderRadius } = customizer || {};
   const lightThemeOptions = LightThemeColors.find(
     (theme) => theme.name === activeTheme

@@ -115,6 +115,31 @@ const I18nApp = i18next;
 export default I18nApp;
 ```
 
+- Trong folder `languages/locales`:
+  - Tạo `en.json`.
+  - Tạo `vi.json`
+
+```jsx
+// locales/en.json
+{
+  "COMMON": {
+    "save": "save",
+    "cancel": "cancel"
+  }
+}
+```
+
+```jsx
+// locales/vi.json
+{
+  "COMMON": {
+    "save": "Lưu",
+    "cancel": "Dừng"
+  }
+}
+
+```
+
 ### 3. Import vào App để khởi chạy i18next:
 
 - Import `i18n.ts` vào `App.tsx`.
@@ -123,10 +148,10 @@ export default I18nApp;
 
 ```jsx
 import "@/languages/index";
-import { initLanguage, setLanguage } from "@/languages/index";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { ELanguages } from "./constants/i18n";
+import { initLanguage, setLanguage } from "./languages";
 
 function App() {
   const { t } = useTranslation();
