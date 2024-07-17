@@ -314,6 +314,7 @@ import store from './store/index.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import { Suspense } from 'react';
 import Spinner from './components/Spinner/index.tsx';
+import ReactDOM from "react-dom/client";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <Suspense fallback={<Spinner />}>
@@ -326,11 +327,49 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 ```
 
-- Nâng cao hơn, tạo folder `hocs`.
+- Thêm supense loader cho route.
+- Trong folder `components`:
+  - Tạo component `SupenseLoader`.
+- Tạo folder `hocs`.
 - Trong folder `hocs`:
   - Tạo file `withSuspenseLoader.tsx` dùng để custom load cho các page route.
 - Trong file `routes.tsx`:
   - Bao `withSuspenseLoader` bao lại các page import.
+
+```jsx
+// components/SuspenseLoader/index.tsx
+import React, { useEffect } from "react";
+import NProgress from "nprogress";
+import { Box, CircularProgress } from "@mui/material";
+
+const SuspenseLoader: React.FC = () => {
+  useEffect(() => {
+    NProgress.start();
+
+    return () => {
+      NProgress.done();
+    };
+  }, []);
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        left: 0,
+        top: 0,
+        width: "100%",
+        height: "100%",
+      }}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <CircularProgress size={64} disableShrink thickness={3} />
+    </Box>
+  );
+};
+
+export default SuspenseLoader;
+```
 
 ```jsx
 // hocs/withSuspenseLoader.tsx
@@ -429,3 +468,126 @@ export default App;
 ```
 
 ## Setup Layout
+
+- Trong folder `components`:
+
+  - Tạo component `PrivateRoute/index.tsx`.
+
+- Trong folder `layouts`:
+  - Tạo `BlankLayout/index.tsx`.
+  - Tạo `MenuLayout/index.tsx`.
+
+```jsx
+// components/PrivateRoute/index.tsx
+import { Paths } from "@/constants/paths";
+import React from "react";
+import { Navigate } from "react-router-dom";
+
+interface PrivateRouteProps {
+  redirectTo: string;
+  element: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({
+  redirectTo = Paths.AUTHENTICATION,
+  element,
+}) => {
+  // TODO: handle get token for condition
+  return true ? element : <Navigate to={redirectTo} replace />;
+};
+
+export default PrivateRoute;
+```
+
+```jsx
+// layouts/BlankLayout/index.tsx
+import React from "react";
+import { Outlet } from "react-router-dom";
+
+const BlankLayout: React.FC = () => {
+  return (
+    <div className="BlankLayout">
+      <Outlet />
+    </div>
+  );
+};
+
+export default BlankLayout;
+```
+
+```jsx
+// layouts/MenuLayout/index.tsx
+import React from "react";
+import { Outlet } from "react-router-dom";
+
+const MenuLayout: React.FC = () => {
+  return (
+    <div className="MenuLayout">
+      <Outlet />
+    </div>
+  );
+};
+
+export default MenuLayout;
+```
+
+- Trong file `configs/route.tsx`:
+  - Dùng `PrivateRoute` làm element của root route.
+  - Dùng `MenuLayout` làm element render trong PrivateRoute và có rediectPath `Authentication`.
+  - Dùng `BlankLayout` làm layout cho các page `Authentication`, `Status404` và các route `*`(Không có route trong dự án).
+
+```jsx
+...
+
+import PrivateRoute from '../components/PrivateRoute';
+
+/*--- LAYOUTS IMPORT ---*/
+import BlankLayout from '@/layouts/BlankLayout';
+import MenuLayout from '@/layouts/MenuLayout';
+
+...
+
+const routes: RouteObject[] = [
+    {
+        path: Paths.ROOT,
+        element: <PrivateRoute redirectTo={Paths.AUTHENTICATION} element={<MenuLayout />} />,
+        children: [
+            {
+                path: '',
+                element: <Dashboard />,
+            },
+            {
+                path: Paths.COURSES,
+                children: [
+                    {
+                        path: '',
+                        element: <CourseListPage />,
+                    },
+                    {
+                        path: Paths.CREATE_COURSE,
+                        element: <CourseCreatePage />,
+                    },
+                    {
+                        path: Paths.COURSE_DETAIL,
+                        element: <CourseDetailPage />,
+                    },
+                ],
+            },
+            // ...
+        ],
+    },
+    {
+      path: Paths.ROOT,
+      element: <BlankLayout />,
+      children: [
+          { path: Paths.AUTHENTICATION, element: <Authentication /> },
+          { path: Paths.STATUS_404, element: <Status404 /> },
+          { path: '*', element: <Navigate to={Paths.STATUS_404} /> },
+      ],
+  },
+];
+
+...
+
+export default routes;
+```
