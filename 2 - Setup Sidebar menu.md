@@ -16,11 +16,11 @@ export { ReactComponent as IconAccount } from "./ic-icon-account.svg";
 
 ## 2. Setup components:
 
+- Chạy lệnh `yarn add @tabler/icons-react simplebar-react @mui/icons-material` để cài đặt thư viện icon và scrollbar.
 - Trong folder `components`:
   - Tạo component `Logo`.
     - Dùng `customizer.activeMode` kiểm tra điều kiện render logo light/dark mode.
   - Tạo component `Scrollbar`:
-    - Sử dụng lệnh `yarn add simplebar-react`.
     - Dùng để custom scrollbar cho dự án.
   - Tạo component `Header`:
     - Trong component `Header` tạo component `ProfileHeader.tsx`.
@@ -32,7 +32,7 @@ import { Link } from "react-router-dom";
 import { AppState } from "@/store";
 import { styled } from "@mui/material";
 import { useSelector } from "react-redux";
-import { LogoDark, LogoLight, LogoShort } from "@/assets/icons/icons";
+import { SVGS } from "@/assets/icons";
 
 const Logo: FC = () => {
   const customizer = useSelector((state: AppState) => state.customizer);
@@ -53,7 +53,7 @@ const Logo: FC = () => {
           alignItems: "center",
         }}
       >
-        <LogoShort />
+        <SVGS.ICLogoShort />
       </LinkStyled>
     );
   }
@@ -66,7 +66,11 @@ const Logo: FC = () => {
         alignItems: "center",
       }}
     >
-      {customizer.activeMode === "dark" ? <LogoLight /> : <LogoDark />}
+      {customizer.activeMode === "dark" ? (
+        <SVGS.ICLogoLight />
+      ) : (
+        <SVGS.ICLogoDark />
+      )}
     </LinkStyled>
   );
 };
@@ -761,7 +765,6 @@ export default NavGroup;
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-// mui imports
 import {
   Collapse,
   ListItemButton,
@@ -771,22 +774,19 @@ import {
   useTheme,
 } from "@mui/material";
 
-// custom imports
-
-// plugins
-import NavItem from "@/components/SideBar/NavItem";
+import { AppState } from "@/store";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AppState } from "@/store";
+import NavItem from "../NavItem";
 
 type NavGroupProps = {
-  [x: string]: any,
-  navlabel?: boolean,
-  subheader?: string,
-  title?: string,
-  icon?: any,
-  href?: any,
+  [x: string]: any;
+  navlabel?: boolean;
+  subheader?: string;
+  title?: string;
+  icon: any;
+  href?: string;
 };
 
 interface NavCollapseProps {
@@ -798,7 +798,6 @@ interface NavCollapseProps {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-// FC Component For Dropdown Menu
 const NavCollapse = ({
   menu,
   level,
@@ -807,7 +806,7 @@ const NavCollapse = ({
   hideMenu,
   onClick,
 }: NavCollapseProps) => {
-  const Icon = menu?.icon;
+  const Icon = menu.icon;
   const customizer = useSelector((state: AppState) => state.customizer);
   const theme = useTheme();
   const { pathname } = useLocation();
@@ -832,11 +831,11 @@ const NavCollapse = ({
     whiteSpace: "nowrap",
     "&:hover": {
       backgroundColor:
-        pathname.includes(menu.href) || open
+        pathname.includes(menu.href as string) || open
           ? theme.palette.primary.main
           : theme.palette.primary.light,
       color:
-        pathname.includes(menu.href) || open
+        pathname.includes(menu.href as string) || open
           ? "white"
           : theme.palette.primary.main,
     },
@@ -999,10 +998,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { toggleMobileSidebar } from "@/store/customizer/CustomizerSlice";
 import { AppState } from "@/store";
-import MenuItems from "@/components/SideBar/MenuItems";
-import NavItem from "@/components/SideBar/NavItem";
-import NavGroup from "@/components/SideBar/NavGroup";
-import NavCollapse from "@/components/SideBar/NavCollapse";
+import MenuItems from "./menuItems";
+import NavGroup from "./NavGroup";
+import NavCollapse from "./NavCollapse";
+import NavItem from "./NavItem";
 
 const SidebarMain = () => {
   const { pathname } = useLocation();
