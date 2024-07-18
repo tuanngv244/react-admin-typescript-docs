@@ -11,7 +11,7 @@ Xây dựng luồng authentication với redux.
 
 - Trong folder `layouts`:
 
-  - Tạo `AuthenLayout` dùng làm layout bao ngoài cho các route authentication.
+  - Tạo `AuthenLayout` dùng làm layout bao ngoài cho các authen route.
 
 - Trong file `configs/routes`:
   - Setup route cho login page,register page.
@@ -171,6 +171,8 @@ export default routes;
 ```
 
 ## Setup common components
+
+- Dựng các components dùng chung cho form dự án.
 
 - Trong folder `components`:
 
@@ -356,18 +358,18 @@ export const LabelStyled = styled(Typography)({
 
   - Tạo file `auth.ts` định nghĩa type `ILoginFormData`,`ILoginResponse`, `IToken` cho login page.
 
-- Trong file `en.json` và `vi.json` thêm các text cần translation của login page.
+- Trong file `en.json` và `vi.json` thêm các text cần translation của login/register page.
 - Trong page `Login`:
 
   - Dựng UI theo design.
   - Thêm translation text.
-  - Tạo function `_onLogin`.
+  - Tạo function `_onLogin` cơ bản.
 
 - Trong page `Register`:
 
   - Dựng UI theo design.
   - Thêm translation text.
-  - Tạo function `_onRegister`.
+  - Tạo function `_onRegister` cơ bản.
 
 ```jsx
 // types/auth.ts
@@ -660,9 +662,34 @@ export default Register;
 ### 1. Setup axiosInstance cơ bản
 
 - Chạy lệnh `yarn add axios js-cookie` để cài đặt `axios` và `js-cookie` (thư viện làm việc với cookie).
+- Trong folder `constants`:
+
+  - Tạo file `environments.ts` và định nghĩa `ENV`,`BASE_URL`.
+  - Trong file `storage.ts` thêm `token` key và `refresthTokenCount` key
+
 - Trong folder `utils`:
   - Tạo file `token.ts` bao gồm các method dùng CRUD token.
   - Tạo file `axiosInstance.ts` và setup axios dùng call api cho dự án.
+
+```jsx
+// constants/environments.ts
+// ref: https://vitejs.dev/guide/env-and-mode.html
+const ENV = import.meta.env.VITE_ENV || "development";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+export { ENV, BASE_URL };
+```
+
+```jsx
+// constants/storage.ts
+export const STORAGE = {
+  token: "cfd_token",
+  language: "cfd_language",
+  refreshTokenCount: "cfd_refreshtoken_count",
+};
+```
+
+- Trong file `token.ts`.
 
 ```jsx
 // utils/token.ts
@@ -980,4 +1007,74 @@ export const useAppSelector = useSelector.withTypes<AppState>();
 
 export default store;
 
+```
+
+- Trong `Login` page xử lý:
+  - Dùng `dispatch` đẩy `authActions.handleLogin` trong auth slice.
+    - Nếu thành công `navigate` về Dashboard.
+    - Nếu thất bại `alert` thông báo.
+
+```jsx
+// Login/index.tsx
+...
+import { Paths } from '@/constants/paths';
+import { useAppDispatch } from '@/store';
+import { authActions } from '@/store/auth/AuthSlice';
+import {  useNavigate } from 'react-router-dom';
+...
+
+const Login = () => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+  ...
+
+    const _onLogin = async (data: ILoginFormData) => {
+        return await dispatch(
+            authActions.handleLogin({
+                payload: data,
+                onSuccess: () => navigate(Paths.ROOT),
+                onFailed: () => alert('Login failed!'),
+            }),
+        );
+    };
+
+    return (
+    ...
+    );
+};
+
+export default Login;
+```
+
+- Trong `MenuLayout`:
+  - Tạo `useEffect` kiểm tra gọi `tokenMethod.get()?.id`.
+  - Nếu có data `dispatch` actions ``authActions.handleGetProfile` để gọi lấy thông tin user về và lưu trữ trong redux.
+
+```jsx
+// MenuLayout/index.tsx
+...
+import {  useAppDispatch } from '@/store';
+import { authActions } from '@/store/auth/AuthSlice';
+import tokenMethod from '@/utils/token';
+...
+
+const MenuLayout: FC = () => {
+  ...
+
+  const dispatch = useAppDispatch();
+
+  ...
+
+  useEffect(() => {
+    if (tokenMethod.get()?.id) {
+      dispatch(authActions.handleGetProfile(tokenMethod.get().id));
+    }
+  }, []);
+
+    return (
+      <>...</>
+    )
+
+export default MenuLayout.
 ```
