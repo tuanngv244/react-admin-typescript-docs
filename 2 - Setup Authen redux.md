@@ -1,6 +1,6 @@
 # Setup Authen redux
 
-Xây dựng luồng authentication với redux.
+Xây dựng luồng authentication với redux. Việc xây dựng luồng authentication (xác thực) với Redux trong một ứng dụng React giúp quản lý trạng thái xác thực của người dùng một cách hiệu quả. 
 
 ## Setup authen page và authen layout
 
