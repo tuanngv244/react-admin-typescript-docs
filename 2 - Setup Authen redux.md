@@ -359,6 +359,10 @@ export const LabelStyled = styled(Typography)({
   - Tạo file `auth.ts` định nghĩa type `ILoginFormData`,`ILoginResponse`, `IToken` cho login page.
 
 - Trong file `en.json` và `vi.json` thêm các text cần translation của login/register page.
+
+- Trong folder `pages` tạo folder `Authentication`.
+- Trong `Authentication` tiếp tục tạo `Login` page và `Register` page.
+
 - Trong page `Login`:
 
   - Dựng UI theo design.
@@ -447,7 +451,7 @@ export interface ILoginResponse {
 - Login page.
 
 ```jsx
-// Login/index.tsx
+// Authentication/Login/index.tsx
 import Checkbox from "@/components/Checkbox";
 import Input from "@/components/Input";
 import { ILoginFormData } from "@/types/auth";
@@ -554,7 +558,7 @@ export default Login;
 - Register page.
 
 ```jsx
-// Register/index.tsx
+// Authentication/Register/index.tsx
 import Checkbox from "@/components/Checkbox";
 import Input from "@/components/Input";
 import { authActions } from "@/store/auth/AuthSlice";
@@ -657,11 +661,40 @@ const Register = () => {
 export default Register;
 ```
 
+- Trong file `App.tsx`:
+  - Gọi hàm `initLanguage`mỗi khi App chạy để init translation.
+
+```jsx
+...
+
+import { initLanguage } from "./languages";
+import { useEffect } from "react";
+
+...
+
+function App() {
+  ...
+
+  useEffect(() => {
+    initLanguage();
+  }, []);
+
+  return (
+   ...
+  );
+}
+
+export default App;
+
+```
+
 ## Setup axios, auth service and auth redux
 
 ### 1. Setup axiosInstance cơ bản
 
 - Chạy lệnh `yarn add axios js-cookie` để cài đặt `axios` và `js-cookie` (thư viện làm việc với cookie).
+
+- Trong `src` tạo file `.env` định nghĩa biến môi trường cho dự án.
 - Trong folder `constants`:
 
   - Tạo file `environments.ts` và định nghĩa `ENV`,`BASE_URL`.
@@ -670,6 +703,12 @@ export default Register;
 - Trong folder `utils`:
   - Tạo file `token.ts` bao gồm các method dùng CRUD token.
   - Tạo file `axiosInstance.ts` và setup axios dùng call api cho dự án.
+
+```jsx
+// src/.env
+VITE_ENV = "development";
+VITE_BASE_URL = "https://cmscourse-api.cfdcircle.vn/api/v1/admin";
+```
 
 ```jsx
 // constants/environments.ts
@@ -1077,4 +1116,41 @@ const MenuLayout: FC = () => {
     )
 
 export default MenuLayout.
+```
+
+- Trong component `ProfileHeader` thực hiện xử lý method `_onLogout`.
+- Dùng `tokenMethod.remove` để xóa token khỏi cookie.
+- Dùng `authActions.reset` để reset state trong auth slice.
+- Navigate về `Login` page.
+
+```jsx
+...
+
+import { Link, useNavigate } from "react-router-dom";
+import tokenMethod from "@/utils/token";
+import { Paths } from "@/constants/paths";
+import { useAppDispatch } from "@/store";
+import { authActions } from "@/store/auth/AuthSlice";
+
+const ProfileHeader = () => {
+...
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+...
+
+  const _onLogout = () => {
+    tokenMethod.remove();
+    dispatch(authActions.reset());
+    navigate(Paths.AUTHENTICATION);
+  };
+
+  return (
+  ...
+  );
+};
+
+export default ProfileHeader;
+
 ```

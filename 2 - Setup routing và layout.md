@@ -108,8 +108,8 @@ export enum Paths {
     CREATE_COURSE = `${COURSES_BASE}/create`,
     COURSE_DETAIL = `${COURSES_BASE}/:id`,
 
-    LOGIN = '/login',
-    REGISTER = '/register',
+    LOGIN = "/authentication/login",
+    REGISTER = "/authentication/register",
 
     STATUS_404 = '/404',
 }
