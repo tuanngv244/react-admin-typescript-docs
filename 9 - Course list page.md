@@ -1,0 +1,1 @@
+# Setup course list page
