@@ -47,6 +47,17 @@ export default CourseListPage;
 
 ## Course table
 
+- Trong folder `List` tạo component `CourseTable` để render course list.
+- Trong `CourseTable`:
+  - Dùng `useQuery` gọi request `courseService.getCourses` để lấy courseData.
+  - Dùng `useMutation` gọi request `courseService.deleteCourse` để xóa course.
+  - Khai báo `columns` để định nghĩa các column được render.
+  - Khai báo `filters` làm lọc của course table.
+  - Hàm `onClickRows` để redirect qua trang course detail.
+  - Hàm `handleDeleteCourse` để xác nhận xóa course.
+  - Dùng component `Table` để render courseData.
+  - Dùng `TableContainer` của MUI để bọc component `Table`
+
 ```jsx
 import Table, { ColumnsType } from '@/components/Table';
 import { TFilterItem } from '@/components/Table/TableFilter';
