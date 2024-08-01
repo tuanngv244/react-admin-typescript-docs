@@ -1,4 +1,4 @@
-# Setup course list page
+# Setup course detail page
 
 - Dựng course detail page.
 - Cây trúc thư mục.
