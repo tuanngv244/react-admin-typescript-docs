@@ -80,6 +80,7 @@ const DashboardPage: React.FC = () => {
 export default DashboardPage;
 ```
 
+- Dùng lệnh `yarn add react-helmet` để cài đặt package.
 - Trong folder `layouts` tạo `PageContainerLayout` để gắn `title`,`meta` cho page.
 - Trong `PageContainerLayout` tạo file `index.tsx`.
 
@@ -117,6 +118,7 @@ export default PageContainerLayout;
   - Khởi tạo `DashboardSlice`.
   - Thêm các async thunk function `handleGetMemberStatistic`, `handleGetRevenueStatistic`, `handleGetLastOrders`và `handleGetLastContacts` để get thông tin cần thiết.
   - Trong `extraReducers` bắt trạng thái các function thêm lưu data vào store.
+  - Trong `store/index.ts` cấu hình thêm `dashboardReducer` vào `configureStore`.
   - Dùng function `shouldUpdate` trong `utils/validation` để kiểm tra xem cần thiết update lại data trong store hay không.
   - Dùng function `totalRevenueYear` trong `utils/calculator` để tính revenue.
   - Export `dashboardActions` bao gồm các actions mặc định và async thunk actions.
@@ -154,7 +156,7 @@ const initialState: StateType = {
   lastContactLoading: false,
 };
 
-export const DashboardSlice = createSlice({
+const { actions, reducer: dashboardReducer } = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
@@ -285,15 +287,35 @@ export const handleGetLastContacts = createAsyncThunk(
   }
 );
 
-export const dashboardActions = {
-  ...DashboardSlice.actions,
+const dashboardActions = {
+  actions,
   handleGetMemberStatistic,
   handleGetRevenueStatistic,
   handleGetLastOrders,
   handleGetLastContacts,
 };
+export { dashboardActions, dashboardReducer };
+```
 
-export default DashboardSlice.reducer;
+```jsx
+// store/index.ts
+
+...
+
+import { dashboardReducer } from "./dashboard/DashboardSlice";
+
+export const store = configureStore({
+  reducer: {
+    customizer: CustomizerReducer,
+    instructor: instructorReducer,
+    dashboard: dashboardReducer,
+  },
+});
+
+...
+
+export default store;
+
 ```
 
 - Trong folder `types`:
@@ -464,7 +486,7 @@ const totalRevenueYear = (data?: IRevenueStatistic["thisYear"]) => {
 export { totalRevenueYear };
 ```
 
-- Trong folder `src/components` tạo comonent `AlertNotification`.
+- Trong folder `src/components` tạo comonent `AlertNotification`,`Select`.
 - Trong `AlertNotification` tạo file `index.tsx` và `styled.ts`.
 - Trong `AlertNotification/index.tsx`:
   - Định nghĩa type `IAlert`.
@@ -476,6 +498,8 @@ export { totalRevenueYear };
     - Tạo `cancelInteral` quản lý trạng thái cancel internal.
     - Tạo state `onAlertActions`chứa các actions `setAlert`,`warning`,`info`,`success` và `close`.
     - Dùng `useEffect` handle auto clear alert.
+- Trong component `Select` tạo file `index.tsx`.
+- Trong component `Loading` thêm props `isFullSize`.
 
 ```jsx
 // AlertNotification/index.tsx
@@ -554,9 +578,108 @@ AlertNotification.useAlertNotification = ({
 
     return [onAlertActions];
 };
-
 export default AlertNotification;
+```
 
+```jsx
+// AlertNotification/styled.ts
+import { Alert, Box, styled } from "@mui/material";
+
+const MainStyled = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  gap: "6px 0",
+  position: "fixed",
+  zIndex: 1000,
+  bottom: 80,
+  right: 10,
+  maxWidth: "300px",
+});
+
+const AlertStyled = styled(Alert)({});
+
+export { MainStyled, AlertStyled };
+```
+
+- Trong `Select/index.tsx`.
+
+```jsx
+// components/Select/index.tsx
+import { Select as SelectMui, SelectProps } from "@mui/material";
+import React from "react";
+
+type Props = SelectProps & {};
+
+const Select: React.FC<Props> = ({ ...props }) => <SelectMui {...props} />;
+
+export default Select;
+```
+
+```jsx
+// components/Loading/index.tsx
+import { Box, CircularProgress, SxProps } from "@mui/material";
+import React, { ReactNode } from "react";
+import { LoadingOverlayStyled } from "./styled";
+
+interface LoadingProps {
+  isLoading?: boolean;
+  children: ReactNode;
+  styles?: SxProps;
+  isFullSize?: boolean;
+  className?: string;
+  isLoadingForPage?: boolean;
+}
+
+const Loading: React.FC<LoadingProps> = ({
+  children,
+  isLoading = false,
+  isLoadingForPage = false,
+  styles,
+  isFullSize,
+  className,
+}) => {
+  const loadingPageStyles: SxProps = isLoadingForPage
+    ? {
+        width: "100vw",
+        height: "100vh",
+        position: "fixed",
+      }
+    : {};
+
+  return (
+    <Box
+      sx={{
+        width: isFullSize ? "100%" : "fit-content",
+        height: isFullSize ? "100%" : "fit-content",
+        position: "relative",
+        ...styles,
+      }}
+      component={"div"}
+      className={className}
+    >
+      {isLoading && (
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 2,
+            ...loadingPageStyles,
+          }}
+        >
+          <LoadingOverlayStyled>
+            <CircularProgress size={32} thickness={5} />
+          </LoadingOverlayStyled>
+        </Box>
+      )}
+      {children}
+    </Box>
+  );
+};
+
+export default Loading;
 ```
 
 ### 2. Handle Dashboard page.

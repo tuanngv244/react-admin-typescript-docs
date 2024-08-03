@@ -92,6 +92,7 @@ export default TopCards;
 
 ### 4. Handle RevenueUpdates
 
+- Dùng lệnh `yarn add react-apexcharts apexcharts` để cài đặt package charts.
 - Trong `dashboard` tạo component `RevenueUpdates.tsx`.
 - Trong `RevenueUpdates.tsx`:
   - Dùng `useAppSelector` lấy data `revenueData`,`totalRevenueData`.
@@ -99,6 +100,12 @@ export default TopCards;
   - Tạo `optionscolumnchart` cấu hình revenue chart UI giao diện.
   - Tạo `seriescolumnchart` để render columns chart.
   - Tạo `totalEarnings` tính tổng thu nhập.
+- Trong folder `constants` tạo folder `pages`.
+- Trong `pages` tạo file `dashboard.ts` chứa các constants của dashboard module.
+- Trong `dashboard/components`:
+  - Tạo component `DashboardCard.tsx`.
+- Trong `constants/pages/dashboard.ts`:
+  - Tạo `TOTAL_COST`,`yearOptions`.
 
 ```jsx
 // Dashboard/RevenueUpdates.tsx
@@ -336,6 +343,115 @@ const RevenueUpdates = () => {
 export default RevenueUpdates;
 ```
 
+```jsx
+// dashboard/components/DashboardCard.tsx
+import { useTheme } from "@mui/material/styles";
+import { Card, CardContent, Typography, Stack, Box } from "@mui/material";
+import { useAppSelector } from "@/store";
+
+type Props = {
+  title?: string,
+  subtitle?: string,
+  action?: JSX.Element,
+  footer?: JSX.Element,
+  cardheading?: string | JSX.Element,
+  headtitle?: string | JSX.Element,
+  headsubtitle?: string | JSX.Element,
+  children?: JSX.Element,
+  middlecontent?: string | JSX.Element,
+};
+
+const DashboardCard = ({
+  title,
+  subtitle,
+  children,
+  action,
+  footer,
+  cardheading,
+  headtitle,
+  headsubtitle,
+  middlecontent,
+}: Props) => {
+  const customizer = useAppSelector((state) => state.customizer);
+
+  const theme = useTheme();
+  const borderColor = theme.palette.divider;
+
+  return (
+    <Card
+      sx={{
+        padding: 0,
+        border: !customizer.isCardShadow ? `1px solid ${borderColor}` : "none",
+        overflow: "hidden",
+        height: "100%",
+      }}
+      elevation={customizer.isCardShadow ? 9 : 0}
+      variant={!customizer.isCardShadow ? "outlined" : undefined}
+    >
+      {cardheading ? (
+        <CardContent>
+          <Typography variant="h5">{headtitle}</Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            {headsubtitle}
+          </Typography>
+        </CardContent>
+      ) : (
+        <CardContent sx={{ p: "30px" }}>
+          {title ? (
+            <Stack
+              direction="row"
+              spacing={2}
+              justifyContent="space-between"
+              alignItems={"center"}
+              mb={3}
+            >
+              <Box>
+                {title ? <Typography variant="h5">{title}</Typography> : ""}
+
+                {subtitle ? (
+                  <Typography variant="subtitle2" color="textSecondary">
+                    {subtitle}
+                  </Typography>
+                ) : (
+                  ""
+                )}
+              </Box>
+              {action}
+            </Stack>
+          ) : null}
+
+          {children}
+        </CardContent>
+      )}
+
+      {middlecontent}
+      {footer}
+    </Card>
+  );
+};
+
+export default DashboardCard;
+```
+
+- Trong `constants/pages/dashboard.ts`.
+
+```jsx
+// constants/pages/dashboard.ts
+import dayjs from "dayjs";
+
+const TOTAL_COST = 500000000; // example total cost for one year.
+
+const yearOptions = Array.from({ length: 5 }).map((_, index) => {
+  const currentYear = dayjs().year();
+  return {
+    value: currentYear - index,
+    label: currentYear - index,
+  };
+});
+
+export { yearOptions, TOTAL_COST };
+```
+
 ### 5. Handle YearlyBreakup
 
 - Trong `dashboard` tạo component `YearlyBreakup.tsx`.
@@ -343,10 +459,9 @@ export default RevenueUpdates;
   - Dùng `useAppSelector` lấy data `revenueData`,`totalRevenueData`.
   - Tạo `optionscolumnchart` cấu hình chart UI.
   - Tạo `seriescolumnchart` cấu hình render columns chart.
-  - Tạo `yearlyBreakupValue` tính thu nhập năm.
-  - Tạo `percentRevenueGrowth` tính phần trăm tăng trưởng năm.
+  - Tạo `yearlyBreakupValue` tính thu nhập thực năm.
+  - Tạo `percentRevenueGrowth` tính phần trăm tăng trưởng thực năm.
 - Trong `dashboard/components`:
-  - Tạo component `DashboardCard.tsx`.
   - Tạo component `RevenueGrowthLine.tsx`.
 
 ```jsx
@@ -502,96 +617,6 @@ export default YearlyBreakup;
 ```
 
 ```jsx
-// dashboard/components/DashboardCard.tsx
-import { useTheme } from "@mui/material/styles";
-import { Card, CardContent, Typography, Stack, Box } from "@mui/material";
-import { useAppSelector } from "@/store";
-
-type Props = {
-  title?: string,
-  subtitle?: string,
-  action?: JSX.Element,
-  footer?: JSX.Element,
-  cardheading?: string | JSX.Element,
-  headtitle?: string | JSX.Element,
-  headsubtitle?: string | JSX.Element,
-  children?: JSX.Element,
-  middlecontent?: string | JSX.Element,
-};
-
-const DashboardCard = ({
-  title,
-  subtitle,
-  children,
-  action,
-  footer,
-  cardheading,
-  headtitle,
-  headsubtitle,
-  middlecontent,
-}: Props) => {
-  const customizer = useAppSelector((state) => state.customizer);
-
-  const theme = useTheme();
-  const borderColor = theme.palette.divider;
-
-  return (
-    <Card
-      sx={{
-        padding: 0,
-        border: !customizer.isCardShadow ? `1px solid ${borderColor}` : "none",
-        overflow: "hidden",
-        height: "100%",
-      }}
-      elevation={customizer.isCardShadow ? 9 : 0}
-      variant={!customizer.isCardShadow ? "outlined" : undefined}
-    >
-      {cardheading ? (
-        <CardContent>
-          <Typography variant="h5">{headtitle}</Typography>
-          <Typography variant="subtitle2" color="textSecondary">
-            {headsubtitle}
-          </Typography>
-        </CardContent>
-      ) : (
-        <CardContent sx={{ p: "30px" }}>
-          {title ? (
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-              alignItems={"center"}
-              mb={3}
-            >
-              <Box>
-                {title ? <Typography variant="h5">{title}</Typography> : ""}
-
-                {subtitle ? (
-                  <Typography variant="subtitle2" color="textSecondary">
-                    {subtitle}
-                  </Typography>
-                ) : (
-                  ""
-                )}
-              </Box>
-              {action}
-            </Stack>
-          ) : null}
-
-          {children}
-        </CardContent>
-      )}
-
-      {middlecontent}
-      {footer}
-    </Card>
-  );
-};
-
-export default DashboardCard;
-```
-
-```jsx
 // dashboard/components/RevenueGrowthLine.tsx
 import { Avatar, Typography } from "@mui/material";
 import { IconArrowDownRight, IconArrowUpLeft } from "@tabler/icons-react";
@@ -640,6 +665,17 @@ export default RevenueGrowthLine;
 ```
 
 ### 6. Handle YearlyEarnings
+
+- Trong `dashboard` tạo component `YearlyEarnings.tsx`.
+- Trong `YearlyEarnings.tsx`:
+  - Dùng `useAppSelector` lấy data `revenueData`,`totalRevenueData`.
+  - Tạo `optionscolumnchart` cấu hình chart UI.
+  - Tạo `seriescolumnchart` cấu hình render columns chart.
+  - Tạo `totalEarnings` tính tổng thu nhập năm.
+  - Tạo `percentRevenueGrowth` tính phần trăm tổng tăng trưởng năm.
+- Trong `dashboard/components`:
+  - Tạo component `DashboardCard.tsx`.
+  - Tạo component `RevenueGrowthLine.tsx`.
 
 ```jsx
 // dashboard/YearlyEarnings.tsx
@@ -760,4 +796,425 @@ const YearlyEarnings = () => {
 };
 
 export default YearlyEarnings;
+```
+
+### 7. Handle LatestOrder
+
+- Trong `dashboard` tạo component `LatestOrder.tsx`.
+- Trong `LatestOrder.tsx`:
+
+  - Dùng `useAppSelector` lấy data `orderData`,`orderLoading`.
+  - Tạo table render UI data order.
+  - Dùng `displayNullish` để check null data.
+
+- Trong folder `utils/transform.ts` thêm function `displayNullish`.
+
+```jsx
+// dashboard/LatestOrder.tsx
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import DashboardCard from "./components/DashboardCard";
+import { useAppSelector } from "@/store";
+import dayjs from "dayjs";
+import { DATE_FORMATS } from "@/constants/format";
+import Loading from "@/components/Loading";
+import { displayNullish } from "@/utils/transform";
+import { useTranslation } from "react-i18next";
+
+const LatestOrder = () => {
+  const { t } = useTranslation();
+  const orderData = useAppSelector((state) => state.dashboard.lastOrders);
+  const orderLoading = useAppSelector(
+    (state) => state.dashboard.lastOrderLoading
+  );
+
+  return (
+    <Loading isFullSize isLoading={orderLoading}>
+      <DashboardCard
+        title="Latest orders"
+        action={
+          <Button color="primary" variant="contained">
+            {t("DASHBOARD.viewAll")}
+          </Button>
+        }
+      >
+        <TableContainer>
+          <Table
+            aria-label="simple table"
+            sx={{
+              whiteSpace: "nowrap",
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.students")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.phone")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.courses")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.type")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.paymentMethod")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.date")}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orderData?.map((basic) => (
+                <TableRow key={basic.id}>
+                  <TableCell>
+                    <Stack direction="row" spacing={2}>
+                      <Avatar sx={{ width: 40, height: 40 }}>
+                        {basic?.name?.charAt(0)}
+                      </Avatar>
+                      <Box>
+                        <Typography
+                          color="textSecondary"
+                          variant="subtitle2"
+                          fontWeight={600}
+                        >
+                          {displayNullish(basic.name)}
+                        </Typography>
+                        <Typography
+                          color="textSecondary"
+                          fontSize="12px"
+                          variant="subtitle2"
+                        >
+                          {displayNullish(basic.customer?.email)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
+                    >
+                      {displayNullish(basic.phone)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={600}
+                    >
+                      {displayNullish(basic.course?.name)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      sx={{
+                        bgcolor:
+                          basic.type === "Online"
+                            ? (theme) => theme.palette.primary.light
+                            : basic.type === "Offline"
+                            ? (theme) => theme.palette.warning.light
+                            : (theme) => theme.palette.secondary.light,
+                        color:
+                          basic.type === "Online"
+                            ? (theme) => theme.palette.primary.main
+                            : basic.type === "Offline"
+                            ? (theme) => theme.palette.warning.main
+                            : (theme) => theme.palette.secondary.main,
+                        borderRadius: "8px",
+                      }}
+                      size="small"
+                      label={basic.type}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      sx={{
+                        bgcolor:
+                          basic.paymentMethod === "Transfer"
+                            ? (theme) => theme.palette.secondary.light
+                            : basic.paymentMethod === "Cash"
+                            ? (theme) => theme.palette.success.light
+                            : (theme) => theme.palette.secondary.light,
+                        color:
+                          basic.paymentMethod === "Transfer"
+                            ? (theme) => theme.palette.secondary.main
+                            : basic.paymentMethod === "Cash"
+                            ? (theme) => theme.palette.success.main
+                            : (theme) => theme.palette.secondary.main,
+                        borderRadius: "8px",
+                      }}
+                      size="small"
+                      label={basic.paymentMethod}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">
+                      {dayjs(basic.createdAt).format(DATE_FORMATS.DATE)}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </DashboardCard>
+    </Loading>
+  );
+};
+
+export default LatestOrder;
+```
+
+```jsx
+// utils/transform.ts
+
+const displayNullish = (data: string | number) => {
+    return data ? data : '---';
+};
+
+...
+
+export {displayNullish}
+```
+
+### 8. Hanlde LatestContacts
+
+- Trong `dashboard` tạo component `LatestContacts.tsx`.
+- Trong `LatestContacts.tsx`:
+
+  - Dùng `useAppSelector` lấy data `contactData`,`contactLoading`.
+  - Tạo table render UI data order.
+  - Dùng `displayNullish` để check null data.
+
+```jsx
+// dashboard/LatestContacts.tsx
+import {
+  Avatar,
+  Box,
+  Button,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import DashboardCard from "./components/DashboardCard";
+import { useAppSelector } from "@/store";
+import Loading from "@/components/Loading";
+import dayjs from "dayjs";
+import { DATE_FORMATS } from "@/constants/format";
+import { displayNullish } from "@/utils/transform";
+import { useTranslation } from "react-i18next";
+
+const LatestContacts = () => {
+  const { t } = useTranslation();
+  const contactData = useAppSelector((state) => state.dashboard.lastContacts);
+  const contactLoading = useAppSelector(
+    (state) => state.dashboard.lastContactLoading
+  );
+
+  return (
+    <Loading isLoading={contactLoading} isFullSize>
+      <DashboardCard
+        title="Latest contacts"
+        action={
+          <Button color="primary" variant="contained">
+            {t("DASHBOARD.viewAll")}
+          </Button>
+        }
+      >
+        <TableContainer>
+          <Table
+            aria-label="simple table"
+            sx={{
+              whiteSpace: "nowrap",
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.users")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.subject")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.phone")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {t("DASHBOARD.date")}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {contactData?.map((basic) => (
+                <TableRow key={basic.id}>
+                  <TableCell>
+                    <Stack direction="row" spacing={2}>
+                      <Avatar sx={{ width: 40, height: 40 }}>
+                        {basic?.name?.charAt(0)}
+                      </Avatar>
+                      <Box>
+                        <Typography
+                          color="textSecondary"
+                          variant="subtitle2"
+                          fontWeight={600}
+                        >
+                          {displayNullish(basic.name)}
+                        </Typography>
+                        <Typography
+                          color="textSecondary"
+                          fontSize="12px"
+                          variant="subtitle2"
+                        >
+                          {displayNullish(basic.email)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={600}
+                    >
+                      {displayNullish(basic.description)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
+                    >
+                      {displayNullish(basic.phone)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
+                    >
+                      {dayjs(basic.createdAt).format(DATE_FORMATS.DATE)}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </DashboardCard>
+    </Loading>
+  );
+};
+
+export default LatestContacts;
+```
+
+### 9. Handle locales EN/VI
+
+- Trong file `en.json` thêm translation for `DASHBOARD`.
+
+```jsx
+// locales/en.json
+{
+...
+  "DASHBOARD": {
+        "cfdDashboard": "CFD Dashboard",
+        "thisIsDashboardPage": "This is Dashboard page",
+        "totalEarnings": "Total Earnings",
+        "revenueThisYear": "Revenue this year",
+        "revenueLastYear": "Revenue last year",
+        "overviewOfRevenue": "Overview of revenue",
+        "viewAll": "View all",
+        "viewFullReport": "View full report",
+        "yearlyBreakup": "Yearly Breakup",
+        "monthlyEarnings": "Monthly Earnings",
+        "lastYear": "last year",
+        "users": "Users",
+        "subject": "Subject",
+        "phone": "Phone",
+        "date": "Date",
+        "students": "Students",
+        "courses": "Courses",
+        "type": "Type",
+        "paymentMethod": "Payment method",
+        "register": "Register",
+        "instructors": "Instructors"
+    },
+...
+}
+```
+
+```jsx
+// locales/vi.json
+{
+...
+  "DASHBOARD": {
+        "cfdDashboard": "CFD Dashboard",
+        "thisIsDashboardPage": "This is Dashboard page",
+        "totalEarnings": "Total Earnings",
+        "revenueThisYear": "Revenue this year",
+        "revenueLastYear": "Revenue last year",
+        "overviewOfRevenue": "Overview of revenue",
+        "viewAll": "View all",
+        "viewFullReport": "View full report",
+        "yearlyBreakup": "Yearly Breakup",
+        "monthlyEarnings": "Monthly Earnings",
+        "lastYear": "last year",
+        "users": "Users",
+        "subject": "Subject",
+        "phone": "Phone",
+        "date": "Date",
+        "students": "Students",
+        "courses": "Courses",
+        "type": "Type",
+        "paymentMethod": "Payment method",
+        "register": "Register",
+        "instructors": "Instructors"
+    },
+...
+}
 ```
