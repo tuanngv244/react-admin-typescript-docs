@@ -498,6 +498,7 @@ export { totalRevenueYear };
     - Tạo `cancelInteral` quản lý trạng thái cancel internal.
     - Tạo state `onAlertActions`chứa các actions `setAlert`,`warning`,`info`,`success` và `close`.
     - Dùng `useEffect` handle auto clear alert.
+  - Trong `App.tsx` thêm component `AlertNotification`.
 - Trong component `Select` tạo file `index.tsx`.
 - Trong component `Loading` thêm props `isFullSize`.
 
@@ -599,6 +600,29 @@ const MainStyled = styled(Box)({
 const AlertStyled = styled(Alert)({});
 
 export { MainStyled, AlertStyled };
+```
+
+```jsx
+import AlertNotification from "./components/AlertNotification";
+...
+
+function App() {
+
+  ...
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ScrollToTop>{routing}</ScrollToTop>
+      </LocalizationProvider>
+       <AlertNotification />
+    </ThemeProvider>
+  );
+}
+
+export default App;
+
 ```
 
 - Trong `Select/index.tsx`.

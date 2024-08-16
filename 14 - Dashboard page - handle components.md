@@ -768,7 +768,7 @@ const YearlyEarnings = () => {
 
   return (
     <DashboardCard
-      title={t("DASHBOARD.monthlyEarnings")}
+      title={t("DASHBOARD.yearlyEarnings")}
       action={
         <Fab color="secondary" size="medium">
           <IconCurrencyDollar width={24} />
@@ -1162,28 +1162,29 @@ export default LatestContacts;
 {
 ...
   "DASHBOARD": {
-        "cfdDashboard": "CFD Dashboard",
-        "thisIsDashboardPage": "This is Dashboard page",
-        "totalEarnings": "Total Earnings",
-        "revenueThisYear": "Revenue this year",
-        "revenueLastYear": "Revenue last year",
-        "overviewOfRevenue": "Overview of revenue",
-        "viewAll": "View all",
-        "viewFullReport": "View full report",
-        "yearlyBreakup": "Yearly Breakup",
-        "monthlyEarnings": "Monthly Earnings",
-        "lastYear": "last year",
-        "users": "Users",
-        "subject": "Subject",
-        "phone": "Phone",
-        "date": "Date",
-        "students": "Students",
-        "courses": "Courses",
-        "type": "Type",
-        "paymentMethod": "Payment method",
-        "register": "Register",
-        "instructors": "Instructors"
-    },
+    "cfdDashboard": "CFD Dashboard",
+    "thisIsDashboardPage": "This is Dashboard page",
+    "totalEarnings": "Total Earnings",
+    "revenueThisYear": "Revenue this year",
+    "revenueLastYear": "Revenue last year",
+    "overviewOfRevenue": "Overview of revenue",
+    "viewAll": "View all",
+    "viewFullReport": "View full report",
+    "yearlyBreakup": "Yearly Breakup",
+    "yearlyEarnings": "Yearly Earnings",
+    "lastYear": "last year",
+    "users": "Users",
+    "subject": "Subject",
+    "phone": "Phone",
+    "date": "Date",
+    "students": "Students",
+    "courses": "Courses",
+    "type": "Type",
+    "paymentMethod": "Payment method",
+    "register": "Register",
+    "instructors": "Instructors",
+    "dashboardIUpdateAfter5minutes!": "Dashboard information will be updated automatically every 5 minutes!"
+  }
 ...
 }
 ```
@@ -1192,29 +1193,30 @@ export default LatestContacts;
 // locales/vi.json
 {
 ...
-  "DASHBOARD": {
-        "cfdDashboard": "CFD Dashboard",
-        "thisIsDashboardPage": "This is Dashboard page",
-        "totalEarnings": "Total Earnings",
-        "revenueThisYear": "Revenue this year",
-        "revenueLastYear": "Revenue last year",
-        "overviewOfRevenue": "Overview of revenue",
-        "viewAll": "View all",
-        "viewFullReport": "View full report",
-        "yearlyBreakup": "Yearly Breakup",
-        "monthlyEarnings": "Monthly Earnings",
-        "lastYear": "last year",
-        "users": "Users",
-        "subject": "Subject",
-        "phone": "Phone",
-        "date": "Date",
-        "students": "Students",
-        "courses": "Courses",
-        "type": "Type",
-        "paymentMethod": "Payment method",
-        "register": "Register",
-        "instructors": "Instructors"
-    },
+   "DASHBOARD": {
+    "cfdDashboard": "CFD Dashboard",
+    "thisIsDashboardPage": "This is Dashboard page",
+    "totalEarnings": "Total Earnings",
+    "revenueThisYear": "Revenue this year",
+    "revenueLastYear": "Revenue last year",
+    "overviewOfRevenue": "Overview of revenue",
+    "viewAll": "View all",
+    "viewFullReport": "View full report",
+    "yearlyBreakup": "Yearly Breakup",
+    "yearlyEarnings": "Yearly Earnings",
+    "lastYear": "last year",
+    "users": "Users",
+    "subject": "Subject",
+    "phone": "Phone",
+    "date": "Date",
+    "students": "Students",
+    "courses": "Courses",
+    "type": "Type",
+    "paymentMethod": "Payment method",
+    "register": "Register",
+    "instructors": "Instructors",
+    "dashboardIUpdateAfter5minutes!": "Dashboard information will be updated automatically every 5 minutes!"
+  }
 ...
 }
 ```
